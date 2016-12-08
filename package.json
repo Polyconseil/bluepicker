@@ -1,0 +1,18 @@
+{
+  "name": "bluepicker",
+  "version": "0.0.1",
+  "description": "Vanilla date, time and range picker",
+  "main": "src/index.js",
+  "dependencies": {
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {
+    "dot-loader": "^0.1.1",
+    "systematic": "^0.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Polyconseil",
+  "license": "MIT"
+}

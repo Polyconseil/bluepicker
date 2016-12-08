@@ -1,0 +1,46 @@
+.bluepicker {
+  position: absolute;
+  z-index: 1000;
+  float: left;
+  width: 320px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  background-clip: padding-box;
+  display: none;
+}
+
+.main-table {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.main-table thead tr th, .main-table tbody tr td {
+  padding: 5px;
+  text-align: center;
+  height: 20px;
+}
+
+.main-table thead tr th {
+  font-weight: 600;
+}
+
+.fakelink:hover {
+  cursor: pointer;
+  background-color: #eee;
+}
+
+.gray {
+  color: #ddd;
+}
+
+.today {
+  background-color: lightblue;
+}
