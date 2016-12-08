@@ -1,21 +1,10 @@
 <table class='main-table'>
-  <thead>
-    <tr>
-      <th class="left fakelink">&#x1F860;</th>
-      <th colspan="5">{{=it.monthYear}}</th>
-      <th class="right fakelink">&#x1F862;</th>
-    </tr>
-    <tr>
-      {{~ it.daysOfWeek :dow }}
-      <th>{{=dow}}</th>
-      {{~}}
-    </tr>
-  </thead>
+  <thead>{{=it.thead}}</thead>
   <tbody>
     {{~ it.lines :line }}
     <tr>
       {{~ line :column }}
-      <td class="dow fakelink {{=column.style}}">{{=column.text}}</td>
+      <td class="fakelink {{=column.style}}">{{=column.text}}</td>
       {{~}}
     </tr>
     {{~}}

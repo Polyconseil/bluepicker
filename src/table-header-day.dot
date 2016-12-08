@@ -1,0 +1,10 @@
+<tr>
+  <th class="left fakelink">&#x1F860;</th>
+  <th colspan="5">{{=it.monthYear}}</th>
+  <th class="right fakelink">&#x1F862;</th>
+</tr>
+<tr>
+  {{~ it.daysOfWeek :dow }}
+  <th>{{=dow}}</th>
+  {{~}}
+</tr>

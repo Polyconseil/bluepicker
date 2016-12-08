@@ -1,0 +1,3 @@
+<tr>
+  <th colspan="7">{{=it.currentTime}}</th>
+</tr>

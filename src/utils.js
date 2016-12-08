@@ -10,17 +10,3 @@ export function createElement (classList = [], innerHTML = '', events = {}, tagN
   }
   return div
 }
-
-
-export function debounce(func, wait) {
-  let timeout = null
-  return function() {
-    const args = arguments
-    if (timeout != null) {
-      clearTimeout(timeout)
-    }
-    timeout = setTimeout(() => {
-      func(arguments)
-    }, wait)
-  }
-}
