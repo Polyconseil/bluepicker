@@ -1,4 +1,4 @@
-.bluepicker {
+:local(.bluepicker) {
   position: absolute;
   z-index: 1000;
   float: left;
@@ -13,7 +13,7 @@
   display: none;
 }
 
-.main-table {
+:local(.main-table) {
   margin: 0;
   width: 100%;
   max-width: 100%;
@@ -38,17 +38,23 @@
   }
 }
 
-.fakelink {
+:local(.fakelink) {
   &:hover {
     cursor: pointer;
     background-color: #eee;
   }
 }
 
-.gray {
+:local(.gray) {
   color: #ddd;
 }
 
-.today {
+:local(.today) {
   background-color: lightblue;
 }
+
+:local(.moh) {}  // minute of hour
+:local(.hod) {}  // hour of day
+:local(.dow) {}  // day of week
+:local(.left) {}
+:local(.right) {}

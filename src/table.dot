@@ -1,10 +1,10 @@
-<table class='main-table'>
+<table class="{{=it.styles['main-table']}}">
   <thead>{{=it.thead}}</thead>
   <tbody>
     {{~ it.lines :line }}
     <tr>
       {{~ line :column }}
-      <td class="fakelink {{=column.style}}">{{=column.text}}</td>
+      <td class="{{=it.styles.fakelink}} {{=column.style}}">{{=column.text}}</td>
       {{~}}
     </tr>
     {{~}}

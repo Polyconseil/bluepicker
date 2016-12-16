@@ -4,7 +4,7 @@ import moment from 'moment'
 import * as dateutils from 'src/dateutils.js'
 import * as utils from 'src/utils.js'
 
-import 'src/styles.css'
+import styles from 'src/styles.css'
 
 import dayHeaderTemplate from 'src/table-header-day.dot'
 import hourHeaderTemplate from 'src/table-header-hour.dot'
@@ -16,21 +16,17 @@ const MODE_DAYS = 'days'
 const MODE_HOURS = 'hours'
 const MODE_MINUTES = 'minutes'
 
-const DEFAULT_STYLES = {
-}
-
-
 function enumerateDaysOfCalendar (currentDay, format = 'D') {
   const start = currentDay.clone().startOf('month').startOf('week')
 
   const enumerated = []
   for (let i = 0; i < 6; i++) {
     enumerated.push(dateutils.daysOfWeek((d) => {
-      let style = 'dow '  // day of week
+      let style = styles.dow + ' '
       if (d.month() !== currentDay.month()) {
-        style += 'gray'
+        style += styles.gray
       } else if (d.isSame(moment(), 'day')) {
-        style += 'today'
+        style += styles.today
       }
 
       return {
@@ -47,9 +43,11 @@ function enumerateDaysOfCalendar (currentDay, format = 'D') {
 
 function tableForDay (day) {
   return tableTemplate({
+    styles: styles,
     thead: dayHeaderTemplate({
       daysOfWeek: dateutils.daysOfWeek(),
       monthYear: day.format('Y-MMM'),
+      styles: styles,
     }),
     lines: enumerateDaysOfCalendar(day),
   })
@@ -61,9 +59,9 @@ function tableForHours (day) {
   for (let i = 0; i < 6; i++) {
     enumerated.push([...Array(4).keys()].map((j) => {
       const text = (i * 4) + j + 1
-      let style = 'hod ' // hour of day
+      let style = styles.hod + ' '
       if (moment().hour() === text) {
-        style += 'today'
+        style += styles.today
       }
       return {
         text: text,
@@ -72,7 +70,11 @@ function tableForHours (day) {
     }))
   }
   return tableTemplate({
-    thead: hourHeaderTemplate({currentDay: day.format('LL')}),
+    styles: styles,
+    thead: hourHeaderTemplate({
+      currentDay: day.format('LL'),
+      styles: styles,
+    }),
     lines: enumerated,
   })
 }
@@ -83,10 +85,10 @@ function tableForMinutes (dayWithHour) {
   for (let i = 0; i < 3; i++) {
     enumerated.push([...Array(4).keys()].map((j) => {
       const text = ((i * 4) + j) * 5
-      let style = 'moh '  // minute of hour
+      let style = styles.moh + ' '
       const currentMinute = moment().minute()
       if (currentMinute - (currentMinute % 5) === text) {
-        style += 'today'
+        style += styles.today
       }
       return {
         text: text,
@@ -95,7 +97,11 @@ function tableForMinutes (dayWithHour) {
     }))
   }
   return tableTemplate({
-    thead: minuteHeaderTemplate({currentTime: dayWithHour.format('lll')}),
+    styles: styles,
+    thead: minuteHeaderTemplate({
+      currentTime: dayWithHour.format('lll'),
+      styles: styles,
+    }),
     lines: enumerated,
   })
 }
@@ -107,8 +113,7 @@ export function init (
     locale = 'en',
     format = '',
     mode = MODE_MINUTES,
-  } = {},
-  styles = DEFAULT_STYLES) {
+  } = {}) {
 
   moment.locale(locale)
 
@@ -116,7 +121,7 @@ export function init (
 
   const root = document.getElementById(id)
   const inputField = root.getElementsByTagName('input')[0]
-  const parent = utils.createElement(['bluepicker'])
+  const parent = utils.createElement([styles.bluepicker])
   root.appendChild(parent)
 
   const selectedDay = moment({
@@ -131,17 +136,17 @@ export function init (
 
   const mainTable = utils.createElement(
     [],
-    tableForDay(currentDay),
+    '',
     {
       click: function (e) {
         let t = e.target
-        if (t.classList.contains('left')) {
+        if (t.classList.contains(styles.left)) {
           currentDay.subtract(1, 'month')
           mainTable.innerHTML = tableForDay(currentDay)
-        } else if (t.classList.contains('right')) {
+        } else if (t.classList.contains(styles.right)) {
           currentDay.add(1, 'month')
           mainTable.innerHTML = tableForDay(currentDay)
-        } else if (t.classList.contains('dow')) {
+        } else if (t.classList.contains(styles.dow)) {
           selectedDay.date(parseInt(t.innerText, 10))
           if (mode === MODE_DAYS) {
             inputField.value = selectedDay.format(format)
@@ -151,7 +156,7 @@ export function init (
           } else {
             console.warn('Should never get there !')
           }
-        } else if (t.classList.contains('hod')) {
+        } else if (t.classList.contains(styles.hod)) {
           selectedDay.hour(parseInt(t.innerText, 10))
           if (mode === MODE_HOURS) {
             inputField.value = selectedDay.format(format)
@@ -161,7 +166,7 @@ export function init (
           } else {
             console.warn('Should never get there !')
           }
-        } else if (t.classList.contains('moh')) {
+        } else if (t.classList.contains(styles.moh)) {
           selectedDay.minute(parseInt(t.innerText, 10))
           if (mode === MODE_MINUTES) {
             inputField.value = selectedDay.format(format)
@@ -176,6 +181,7 @@ export function init (
   )
 
   parent.appendChild(mainTable)
+  hideAndResetTable()
 
   root.addEventListener('click', function (e) {
     parent.style.display = 'block'
