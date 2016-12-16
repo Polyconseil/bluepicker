@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "dot-loader": "^0.1.1",
+    "postcss-cssnext": "^2.9.0",
     "systematic": "^0.8"
   },
   "scripts": {

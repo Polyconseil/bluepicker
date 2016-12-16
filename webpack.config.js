@@ -5,4 +5,10 @@ webpackDefaults.module.noParse = [/moment.js/]
 
 webpackDefaults.module.loaders.push({ test: /\.dot$/, loader: 'dot-loader' })
 
+webpackDefaults.postcss = function () {
+  return [
+    require('postcss-cssnext'),
+  ]
+}
+
 module.exports = webpackDefaults

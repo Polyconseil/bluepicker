@@ -20,21 +20,29 @@
   background-color: transparent;
   border-collapse: collapse;
   border-spacing: 0;
+
+  & tbody tr td {
+    padding: 5px;
+    text-align: center;
+    height: 20px;
+  }
+
+  & thead tr th {
+    font-weight: 600;
+  }
+
+  & thead tr th {
+    padding: 5px;
+    text-align: center;
+    height: 20px;
+  }
 }
 
-.main-table thead tr th, .main-table tbody tr td {
-  padding: 5px;
-  text-align: center;
-  height: 20px;
-}
-
-.main-table thead tr th {
-  font-weight: 600;
-}
-
-.fakelink:hover {
-  cursor: pointer;
-  background-color: #eee;
+.fakelink {
+  &:hover {
+    cursor: pointer;
+    background-color: #eee;
+  }
 }
 
 .gray {
