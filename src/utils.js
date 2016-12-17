@@ -10,3 +10,16 @@ export function createElement (classList = [], innerHTML = '', events = {}, tagN
   }
   return div
 }
+
+export function range (a = null, b = null) {
+  if (a == null) {
+    return []
+  }
+  if (b == null) {
+    return [...Array(a).keys()]
+  }
+  if (b < a) {
+    throw Error("Can't use range() if a > b")
+  }
+  return [...Array(b - a).keys()].map((x) => x + a)
+}

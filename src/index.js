@@ -57,7 +57,7 @@ function tableForDay (day) {
 function tableForHours (day) {
   const enumerated = []
   for (let i = 0; i < 6; i++) {
-    enumerated.push([...Array(4).keys()].map((j) => {
+    enumerated.push(utils.range(4).map((j) => {
       const text = (i * 4) + j + 1
       let style = styles.hod + ' '
       if (moment().hour() === text) {
@@ -83,7 +83,7 @@ function tableForHours (day) {
 function tableForMinutes (dayWithHour) {
   const enumerated = []
   for (let i = 0; i < 3; i++) {
-    enumerated.push([...Array(4).keys()].map((j) => {
+    enumerated.push(utils.range(4).map((j) => {
       const text = ((i * 4) + j) * 5
       let style = styles.moh + ' '
       const currentMinute = moment().minute()
