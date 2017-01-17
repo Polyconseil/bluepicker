@@ -121,7 +121,7 @@ export function init (
 
   const root = document.getElementById(id)
   const inputField = root.getElementsByTagName('input')[0]
-  const parent = utils.createElement([styles.bluepicker])
+  const parent = utils.createElement([styles.bluepicker, 'bluepicker__public'])
   root.appendChild(parent)
 
   const selectedDay = moment({
@@ -184,11 +184,14 @@ export function init (
   hideAndResetTable()
 
   root.addEventListener('click', function (e) {
+    for (let item of document.getElementsByClassName('bluepicker__public')) {
+      item.style.display = 'none'
+    }
     parent.style.display = 'block'
     e.stopPropagation()
   }, false)
 
-  document.addEventListener('click', hideAndResetTable)
+  document.addEventListener('click', hideAndResetTable, {passive: true})
 }
 
 export const bluepicker = {

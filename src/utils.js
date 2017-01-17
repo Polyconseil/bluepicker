@@ -3,7 +3,9 @@ export function createElement (classList = [], innerHTML = '', events = {}, tagN
   if (id) {
     div.id = id
   }
-  div.classList = classList
+  for (let klass of classList) {
+    div.classList.add(klass)
+  }
   div.innerHTML = innerHTML
   for (let eventKey of Object.keys(events)) {
     div.addEventListener(eventKey, events[eventKey], false)
