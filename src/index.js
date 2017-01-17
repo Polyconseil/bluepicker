@@ -191,6 +191,8 @@ export function init (
   document.addEventListener('click', hideAndResetTable)
 }
 
-window.bluepicker = {
+export const bluepicker = {
   init: init,
 }
+module.exports = bluepicker
+window.bluepicker = bluepicker

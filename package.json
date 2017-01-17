@@ -2,14 +2,18 @@
   "name": "bluepicker",
   "version": "0.0.1",
   "description": "Vanilla date, time and range picker",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "moment": "^2.17.1"
   },
   "devDependencies": {
     "dot-loader": "^0.1.1",
+    "karma": "^1.4.0",
     "postcss-cssnext": "^2.9.0",
-    "systematic": "^0.8"
+    "systematic": "^0.9.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
