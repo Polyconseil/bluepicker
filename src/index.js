@@ -110,10 +110,12 @@ function tableForMinutes (dayWithHour) {
 export function init (
   id,
   {
-    locale = 'en',
+    callback = null,
     format = '',
+    locale = 'en',
     mode = MODE_MINUTES,
-  } = {}) {
+  } = {},
+  initValue = null) {
 
   moment.locale(locale)
 
@@ -124,10 +126,31 @@ export function init (
   const parent = utils.createElement([styles.bluepicker, 'bluepicker__public'])
   root.appendChild(parent)
 
-  const selectedDay = moment({
-    year: currentDay.year(),
-    month: currentDay.month(),
-  })
+  let selectedDay = null
+  if (initValue) {
+    // FIXME: strip it to minutes or something of the sort
+    selectedDay = initValue
+    inputField.value = selectedDay.format(format)
+  } else {
+    selectedDay = moment({
+      year: currentDay.year(),
+      month: currentDay.month(),
+    })
+  }
+
+  function updateValue () {
+    const data = {
+      id: id,
+      format: format,
+      value: selectedDay,
+    }
+    if (callback) {
+      callback(data)
+    }
+    const event = new CustomEvent('bluepicker:update', data)
+    root.dispatchEvent(event)
+    inputField.value = selectedDay.format(format)
+  }
 
   function hideAndResetTable () {
     mainTable.innerHTML = tableForDay(currentDay)
@@ -149,7 +172,7 @@ export function init (
         } else if (t.classList.contains(styles.dow)) {
           selectedDay.date(parseInt(t.innerText, 10))
           if (mode === MODE_DAYS) {
-            inputField.value = selectedDay.format(format)
+            updateValue()
             hideAndResetTable()
           } else if (mode === MODE_HOURS || mode === MODE_MINUTES) {
             mainTable.innerHTML = tableForHours(selectedDay)
@@ -159,7 +182,7 @@ export function init (
         } else if (t.classList.contains(styles.hod)) {
           selectedDay.hour(parseInt(t.innerText, 10))
           if (mode === MODE_HOURS) {
-            inputField.value = selectedDay.format(format)
+            updateValue()
             hideAndResetTable()
           } else if (mode === MODE_MINUTES) {
             mainTable.innerHTML = tableForMinutes(selectedDay)
@@ -169,7 +192,7 @@ export function init (
         } else if (t.classList.contains(styles.moh)) {
           selectedDay.minute(parseInt(t.innerText, 10))
           if (mode === MODE_MINUTES) {
-            inputField.value = selectedDay.format(format)
+            updateValue()
             hideAndResetTable()
           } else {
             console.warn('Should never get there !')
