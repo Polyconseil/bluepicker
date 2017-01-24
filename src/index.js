@@ -206,6 +206,15 @@ export function init (
   parent.appendChild(mainTable)
   hideAndResetTable()
 
+  inputField.addEventListener('change', function (e) {
+    let newDay = moment(inputField.value)
+    if (newDay.isValid()) {
+      selectedDay = newDay
+      updateValue()
+      hideAndResetTable()
+    }
+  })
+
   root.addEventListener('click', function (e) {
     for (let item of document.getElementsByClassName('bluepicker__public')) {
       item.style.display = 'none'
