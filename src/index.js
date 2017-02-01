@@ -153,7 +153,7 @@ export function init (
   }
 
   function hideAndResetTable () {
-    mainTable.innerHTML = tableForDay(currentDay)
+    mainTable.innerHTML = tableForDay(selectedDay)
     parent.style.display = 'none'
   }
 
@@ -164,11 +164,11 @@ export function init (
       click: function (e) {
         let t = e.target
         if (t.classList.contains(styles.left)) {
-          currentDay.subtract(1, 'month')
-          mainTable.innerHTML = tableForDay(currentDay)
+          selectedDay.subtract(1, 'month')
+          mainTable.innerHTML = tableForDay(selectedDay)
         } else if (t.classList.contains(styles.right)) {
-          currentDay.add(1, 'month')
-          mainTable.innerHTML = tableForDay(currentDay)
+          selectedDay.add(1, 'month')
+          mainTable.innerHTML = tableForDay(selectedDay)
         } else if (t.classList.contains(styles.dow)) {
           selectedDay.date(parseInt(t.innerText, 10))
           if (mode === MODE_DAYS) {
