@@ -32,6 +32,7 @@ function enumerateDaysOfCalendar (currentDay, format = 'D') {
       return {
         text: d.format('D'),
         style: style,
+        value: d.format('YYYY-MM-DD'),
       }
     }, start))
 
@@ -58,14 +59,16 @@ function tableForHours (day) {
   const enumerated = []
   for (let i = 0; i < 6; i++) {
     enumerated.push(utils.range(4).map((j) => {
-      const text = (i * 4) + j + 1
+      const value = (i * 4) + j
+      const text = dateutils.formatHour(value)
       let style = styles.hod + ' '
-      if (moment().hour() === text) {
+      if (moment().hour() === value) {
         style += styles.today
       }
       return {
         text: text,
         style: style,
+        value: value,
       }
     }))
   }
@@ -84,15 +87,17 @@ function tableForMinutes (dayWithHour) {
   const enumerated = []
   for (let i = 0; i < 3; i++) {
     enumerated.push(utils.range(4).map((j) => {
-      const text = ((i * 4) + j) * 5
+      const value = ((i * 4) + j) * 5
+      const text = dateutils.formatHour(dayWithHour.hour(), value)
       let style = styles.moh + ' '
       const currentMinute = moment().minute()
-      if (currentMinute - (currentMinute % 5) === text) {
+      if (currentMinute - (currentMinute % 5) === value) {
         style += styles.today
       }
       return {
         text: text,
         style: style,
+        value: value,
       }
     }))
   }
@@ -170,7 +175,12 @@ export function init (
           selectedDay.add(1, 'month')
           mainTable.innerHTML = tableForDay(selectedDay)
         } else if (t.classList.contains(styles.dow)) {
-          selectedDay.date(parseInt(t.innerText, 10))
+          const clickedDay = moment(utils.getDataValue(t))
+          selectedDay.set({
+            'year': clickedDay.year(),
+            'month': clickedDay.month(),
+            'date': clickedDay.date(),
+          })
           if (mode === MODE_DAYS) {
             updateValue()
             hideAndResetTable()
@@ -180,7 +190,7 @@ export function init (
             console.warn('Should never get there !')
           }
         } else if (t.classList.contains(styles.hod)) {
-          selectedDay.hour(parseInt(t.innerText, 10))
+          selectedDay.hour(utils.getIntDataValue(t))
           if (mode === MODE_HOURS) {
             updateValue()
             hideAndResetTable()
@@ -190,7 +200,7 @@ export function init (
             console.warn('Should never get there !')
           }
         } else if (t.classList.contains(styles.moh)) {
-          selectedDay.minute(parseInt(t.innerText, 10))
+          selectedDay.minute(utils.getIntDataValue(t))
           if (mode === MODE_MINUTES) {
             updateValue()
             hideAndResetTable()

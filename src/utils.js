@@ -13,15 +13,35 @@ export function createElement (classList = [], innerHTML = '', events = {}, tagN
   return div
 }
 
-export function range (a = null, b = null) {
+export function getDataValue (domItem) {
+  return domItem.getAttribute('data-value')
+}
+
+export function getIntDataValue (domItem) {
+  return parseInt(getDataValue(domItem), 10)
+}
+
+export function range (a = null, b = 0) {
   if (a == null) {
     return []
   }
-  if (b == null) {
-    return [...Array(a).keys()]
-  }
-  if (b < a) {
-    throw Error("Can't use range() if a > b")
-  }
-  return [...Array(b - a).keys()].map((x) => x + a)
+  return [...Array.from(Array(Math.abs(b - a)).keys())].map((x) => x + Math.min(a, b))
 }
+
+export function padStart (str, maxLength, fillString = ' ') {
+  if (str.length >= maxLength) {
+    return str
+  }
+
+  fillString = String(fillString)
+  if (fillString.length === 0) {
+    fillString = ' '
+  }
+
+  let fillLen = maxLength - str.length
+  let timesToRepeat = Math.ceil(fillLen / fillString.length)
+  let truncatedStringFiller = fillString
+    .repeat(timesToRepeat)
+    .slice(0, fillLen)
+  return truncatedStringFiller + str
+};

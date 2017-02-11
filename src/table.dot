@@ -4,7 +4,7 @@
     {{~ it.lines :line }}
     <tr>
       {{~ line :column }}
-      <td class="{{=it.styles.fakelink}} {{=column.style}}">{{=column.text}}</td>
+      <td class="{{=it.styles.fakelink}} {{=column.style}}" data-value="{{=column.value}}">{{=column.text}}</td>
       {{~}}
     </tr>
     {{~}}
