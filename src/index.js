@@ -16,6 +16,18 @@ const MODE_DAYS = 'days'
 const MODE_HOURS = 'hours'
 const MODE_MINUTES = 'minutes'
 
+function hideBluepickerElements () {
+  for (let item of document.getElementsByClassName('bluepicker__public')) {
+    item.style.display = 'none'
+  }
+}
+
+function appendDropdownTo (item, classes) {
+  const drop = utils.createElement(classes)
+  item.appendChild(drop)
+  return drop
+}
+
 function enumerateDaysOfCalendar (currentDay, format = 'D') {
   const start = currentDay.clone().startOf('month').startOf('week')
 
@@ -112,6 +124,7 @@ function tableForMinutes (dayWithHour) {
 }
 
 
+// FIXME: For now the choice is to leave the user free to create the input/TZ fields. We could also create them if not provided.
 export function init (
   id,
   {
@@ -119,6 +132,7 @@ export function init (
     format = '',
     locale = 'en',
     mode = MODE_MINUTES,
+    utcMode = false,
   } = {},
   initValue = null) {
 
@@ -127,9 +141,20 @@ export function init (
   let currentDay = moment()
 
   const root = document.getElementById(id)
+
   const inputField = root.getElementsByTagName('input')[0]
-  const parent = utils.createElement([styles.bluepicker, 'bluepicker__public'])
-  root.appendChild(parent)
+
+  const dateDropdown = appendDropdownTo(root, [
+    styles.bluepicker_date_dropdown,
+    'bluepicker__public',  // public CSS class allows for multi-instance dropdown cleaning
+  ])
+
+  const tzField = root.getElementsByClassName('timezone')[0]
+  if (tzField) {
+    switchTzField(null, utcMode)
+    tzField.style.cursor = 'pointer'
+    tzField.addEventListener('click', switchTzField)
+  }
 
   let selectedDay = null
   if (initValue) {
@@ -143,23 +168,39 @@ export function init (
     })
   }
 
+  function switchTzField (event, forceUtc) {
+    const isForced = typeof forceUtc !== 'undefined'
+    if ((isForced && forceUtc === true) || (!isForced && tzField.innerHTML !== 'UTC')) {
+      tzField.innerHTML = 'UTC'
+      utcMode = true
+    } else {
+      tzField.innerHTML = dateutils.getTzOffset()
+      utcMode = false
+    }
+  }
+
   function updateValue () {
     const data = {
       id: id,
       format: format,
       value: selectedDay,
+      utcMode: utcMode,
     }
     if (callback) {
       callback(data)
     }
     const event = new CustomEvent('bluepicker:update', data)
     root.dispatchEvent(event)
-    inputField.value = selectedDay.format(format)
+    if (utcMode) {
+      inputField.value = selectedDay.format(format)
+    } else {
+      inputField.value = selectedDay.local().format(format)
+    }
   }
 
   function hideAndResetTable () {
     mainTable.innerHTML = tableForDay(selectedDay)
-    parent.style.display = 'none'
+    dateDropdown.style.display = 'none'
   }
 
   const mainTable = utils.createElement(
@@ -213,11 +254,16 @@ export function init (
     }
   )
 
-  parent.appendChild(mainTable)
+  dateDropdown.appendChild(mainTable)
   hideAndResetTable()
 
   inputField.addEventListener('change', function (e) {
-    let newDay = moment(inputField.value)
+    let newDay = null
+    if (utcMode) {
+      newDay = moment.utc(inputField.value)
+    } else {
+      newDay = moment(inputField.value)
+    }
     if (newDay.isValid()) {
       selectedDay = newDay
       updateValue()
@@ -225,15 +271,16 @@ export function init (
     }
   })
 
-  root.addEventListener('click', function (e) {
-    for (let item of document.getElementsByClassName('bluepicker__public')) {
-      item.style.display = 'none'
-    }
-    parent.style.display = 'block'
+  inputField.addEventListener('click', function (e) {
+    hideBluepickerElements()
+    dateDropdown.style.display = 'block'
     e.stopPropagation()
   }, false)
 
-  document.addEventListener('click', hideAndResetTable, {passive: true})
+  document.addEventListener('click', () => {
+    hideBluepickerElements()
+    hideAndResetTable()
+  })
 }
 
 const bluepicker = {

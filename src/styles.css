@@ -1,4 +1,4 @@
-:local(.bluepicker) {
+:local(.bluepicker_date_dropdown) {
   position: absolute;
   z-index: 1000;
   float: left;
