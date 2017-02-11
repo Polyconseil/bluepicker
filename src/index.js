@@ -54,7 +54,7 @@ function enumerateDaysOfCalendar (currentDay, format = 'D') {
 }
 
 
-function tableForDay (day) {
+function tableForDay (day, nowButtonText) {
   return tableTemplate({
     styles: styles,
     thead: dayHeaderTemplate({
@@ -63,6 +63,7 @@ function tableForDay (day) {
       styles: styles,
     }),
     lines: enumerateDaysOfCalendar(day),
+    nowButtonText: nowButtonText,
   })
 }
 
@@ -133,6 +134,7 @@ export function init (
     locale = 'en',
     mode = MODE_MINUTES,
     utcMode = false,
+    nowButtonText = 'Now',  // the calling app is responsible for translating this.
   } = {},
   initValue = null) {
 
@@ -199,7 +201,7 @@ export function init (
   }
 
   function hideAndResetTable () {
-    mainTable.innerHTML = tableForDay(selectedDay)
+    mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
     dateDropdown.style.display = 'none'
   }
 
@@ -211,10 +213,10 @@ export function init (
         let t = e.target
         if (t.classList.contains(styles.left)) {
           selectedDay.subtract(1, 'month')
-          mainTable.innerHTML = tableForDay(selectedDay)
+          mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
         } else if (t.classList.contains(styles.right)) {
           selectedDay.add(1, 'month')
-          mainTable.innerHTML = tableForDay(selectedDay)
+          mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
         } else if (t.classList.contains(styles.dow)) {
           const clickedDay = moment(utils.getDataValue(t))
           selectedDay.set({
@@ -248,6 +250,18 @@ export function init (
           } else {
             console.warn('Should never get there !')
           }
+        } else if (t.classList.contains(styles.nowButton)) {
+          const now = moment()
+          selectedDay.set({
+            'year': now.year(),
+            'month': now.month(),
+            'date': now.date(),
+            'hour': now.hour(),
+            'minute': now.minute(),
+            'second': now.second(),
+          })
+          updateValue()
+          hideAndResetTable()
         }
         e.stopPropagation()
       },

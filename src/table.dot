@@ -8,5 +8,11 @@
       {{~}}
     </tr>
     {{~}}
+
+    {{? it.nowButtonText}}
+    <tr>
+      <td colspan="7" class="{{=it.styles.fakelink}} {{=it.styles.nowButton}}">{{=it.nowButtonText}}</td>
+    </tr>
+    {{?}}
   </tbody>
 <table>

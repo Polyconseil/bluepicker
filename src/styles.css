@@ -45,6 +45,10 @@
   }
 }
 
+:local(.nowButton) {
+  padding: 5px 2px;
+}
+
 :local(.gray) {
   color: #ddd;
 }
