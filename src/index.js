@@ -140,8 +140,6 @@ export function init (
 
   moment.locale(locale)
 
-  let currentDay = moment()
-
   const root = document.getElementById(id)
 
   const inputField = root.getElementsByTagName('input')[0]
@@ -160,15 +158,23 @@ export function init (
 
   let selectedDay = null
   if (initValue) {
-    // FIXME: strip it to minutes or something of the sort
-    selectedDay = initValue
+    selectedDay = moment(initValue)
     inputField.value = selectedDay.format(format)
   } else {
+    const today = moment()
     selectedDay = moment({
-      year: currentDay.year(),
-      month: currentDay.month(),
+      year: today.year(),
+      month: today.month(),
     })
   }
+
+  selectedDay.set({
+    date: 1,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  })
 
   function switchTzField (event, forceUtc) {
     const isForced = typeof forceUtc !== 'undefined'
