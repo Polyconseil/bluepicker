@@ -165,29 +165,16 @@ export function init (
     selectedDay = moment({
       year: today.year(),
       month: today.month(),
+      date: 1,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
     })
   }
 
-  selectedDay.set({
-    date: 1,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-  })
-
-  function switchTzField (event, forceUtc) {
-    const isForced = typeof forceUtc !== 'undefined'
-    if ((isForced && forceUtc === true) || (!isForced && tzField.innerHTML !== 'UTC')) {
-      tzField.innerHTML = 'UTC'
-      utcMode = true
-    } else {
-      tzField.innerHTML = dateutils.getTzOffset()
-      utcMode = false
-    }
-  }
-
-  function updateValue () {
+  function dispatchUpdateEvent () {
+    if (!selectedDay) return  // do not bother if no value yet
     const data = {
       id: id,
       format: format,
@@ -199,6 +186,22 @@ export function init (
     }
     const event = new CustomEvent('bluepicker:update', data)
     root.dispatchEvent(event)
+  }
+
+  function switchTzField (event, forceUtc) {
+    const isForced = typeof forceUtc !== 'undefined'
+    if ((isForced && forceUtc === true) || (!isForced && tzField.innerHTML !== 'UTC')) {
+      tzField.innerHTML = 'UTC'
+      utcMode = true
+    } else {
+      tzField.innerHTML = dateutils.getTzOffset()
+      utcMode = false
+    }
+    dispatchUpdateEvent()
+  }
+
+  function updateValue () {
+    dispatchUpdateEvent()
     if (utcMode) {
       inputField.value = selectedDay.format(format)
     } else {
