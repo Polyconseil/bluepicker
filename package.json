@@ -3,6 +3,9 @@
   "version": "0.2.2",
   "description": "Vanilla date, time and range picker",
   "main": "dist/index.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "files": [
     "dist"
   ],
