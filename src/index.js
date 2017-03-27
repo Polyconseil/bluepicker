@@ -192,6 +192,14 @@ export function init (
     dispatchUpdateEvent()
   }
 
+  function padSelectedDay () {
+    if (padToBoundary) {
+      if (mode === MODE_DAYS) selectedDay.set({hours: 0, minutes: 0})
+      if (mode === MODE_HOURS) selectedDay.set({minutes: 0})
+      selectedDay.set({seconds: 0, milliseconds: 0})
+    }
+  }
+
   function updateValue () {
     dispatchUpdateEvent()
     if (utcMode) {
@@ -204,6 +212,12 @@ export function init (
   function hideAndResetTable () {
     mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
     dateDropdown.style.display = 'none'
+  }
+
+  function updateAfterClick () {
+    padSelectedDay()
+    updateValue()
+    hideAndResetTable()
   }
 
   const mainTable = utils.createElement(
@@ -226,8 +240,7 @@ export function init (
             'date': clickedDay.date(),
           })
           if (mode === MODE_DAYS) {
-            updateValue()
-            hideAndResetTable()
+            updateAfterClick()
           } else if (mode === MODE_HOURS || mode === MODE_MINUTES) {
             mainTable.innerHTML = tableForHours(selectedDay)
           } else {
@@ -236,8 +249,7 @@ export function init (
         } else if (t.classList.contains(styles.hod)) {
           selectedDay.hour(utils.getIntDataValue(t))
           if (mode === MODE_HOURS) {
-            updateValue()
-            hideAndResetTable()
+            updateAfterClick()
           } else if (mode === MODE_MINUTES) {
             mainTable.innerHTML = tableForMinutes(selectedDay)
           } else {
@@ -246,8 +258,7 @@ export function init (
         } else if (t.classList.contains(styles.moh)) {
           selectedDay.minute(utils.getIntDataValue(t))
           if (mode === MODE_MINUTES) {
-            updateValue()
-            hideAndResetTable()
+            updateAfterClick()
           } else {
             console.warn('Should never get there !')
           }
@@ -261,8 +272,7 @@ export function init (
             'minute': now.minute(),
             'second': now.second(),
           })
-          updateValue()
-          hideAndResetTable()
+          updateAfterClick()
         }
         e.stopPropagation()
       },
