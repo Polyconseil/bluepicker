@@ -98,13 +98,13 @@ function tableForHours (day) {
 
 function tableForMinutes (dayWithHour) {
   const enumerated = []
-  for (let i = 0; i < 3; i++) {
-    enumerated.push(utils.range(4).map((j) => {
-      const value = ((i * 4) + j) * 5
+  for (let i = 0; i < 2; i++) {
+    enumerated.push(utils.range(3).map((j) => {
+      const value = ((i * 4) + j) * 10
       const text = dateutils.formatHour(dayWithHour.hour(), value)
       let style = styles.moh + ' '
       const currentMinute = moment().minute()
-      if (currentMinute - (currentMinute % 5) === value) {
+      if (currentMinute - (currentMinute % 10) === value) {
         style += styles.today
       }
       return {
