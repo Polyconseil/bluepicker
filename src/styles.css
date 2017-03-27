@@ -53,10 +53,6 @@
   color: #ddd;
 }
 
-:local(.today) {
-  background-color: lightblue;
-}
-
 :local(.moh) {}  // minute of hour
 :local(.hod) {}  // hour of day
 :local(.dow) {}  // day of week

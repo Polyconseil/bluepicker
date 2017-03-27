@@ -37,8 +37,6 @@ function enumerateDaysOfCalendar (currentDay, format = 'D') {
       let style = styles.dow + ' '
       if (d.month() !== currentDay.month()) {
         style += styles.gray
-      } else if (d.isSame(moment(), 'day')) {
-        style += styles.today
       }
 
       return {
@@ -75,9 +73,6 @@ function tableForHours (day) {
       const value = (i * 4) + j
       const text = dateutils.formatHour(value)
       let style = styles.hod + ' '
-      if (moment().hour() === value) {
-        style += styles.today
-      }
       return {
         text: text,
         style: style,
@@ -103,10 +98,6 @@ function tableForMinutes (dayWithHour) {
       const value = ((i * 4) + j) * 10
       const text = dateutils.formatHour(dayWithHour.hour(), value)
       let style = styles.moh + ' '
-      const currentMinute = moment().minute()
-      if (currentMinute - (currentMinute % 10) === value) {
-        style += styles.today
-      }
       return {
         text: text,
         style: style,
