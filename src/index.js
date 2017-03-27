@@ -120,11 +120,12 @@ function tableForMinutes (dayWithHour) {
 export function init (
   id,
   {
-    callback = null,
-    format = '',
+    callback = null,        // function to call whenever an update happens.
+    format = '',            // format of output. Blank means ISO format.
     locale = 'en',
-    mode = MODE_MINUTES,
-    utcMode = false,
+    mode = MODE_MINUTES,    // switches from a DAY picker, to a HOUR picker and even a MINUTE one.
+    utcMode = false,        // when true, the output value is in UTC.
+    padToBoundary = true,   // pad output value to the day, hour or minute clicked.
     nowButtonText = 'Now',  // the calling app is responsible for translating this.
   } = {},
   initValue = null) {
