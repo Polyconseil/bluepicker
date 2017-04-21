@@ -95,7 +95,7 @@ function tableForMinutes (dayWithHour) {
   const enumerated = []
   for (let i = 0; i < 2; i++) {
     enumerated.push(utils.range(3).map((j) => {
-      const value = ((i * 4) + j) * 10
+      const value = ((i * 3) + j) * 10
       const text = dateutils.formatHour(dayWithHour.hour(), value)
       let style = styles.moh + ' '
       return {
