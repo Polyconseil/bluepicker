@@ -165,12 +165,12 @@ export function init (
     })
   }
 
-  function dispatchUpdateEvent () {
-    if (!selectedDay) return  // do not bother if no value yet
+  function dispatchUpdateEvent (value = null) {
+    if (value == null && !selectedDay) return  // do not bother if no value yet
     const data = {
       id: id,
       format: format,
-      value: selectedDay,
+      value: value == null ? selectedDay : value,
       utcMode: utcMode,
     }
     if (callback) {
@@ -283,6 +283,9 @@ export function init (
   hideAndResetTable()
 
   inputField.addEventListener('change', function (e) {
+    if (inputField.value === '') {  // user resetted the field
+      
+    }
     let newDay = null
     if (utcMode) {
       newDay = moment.utc(inputField.value)
