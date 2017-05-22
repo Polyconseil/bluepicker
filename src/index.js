@@ -127,10 +127,13 @@ export function init (
     utcMode = false,        // when true, the output value is in UTC.
     padToBoundary = true,   // pad output value to the day, hour or minute clicked.
     nowButtonText = 'Now',  // the calling app is responsible for translating this.
+    updateOnClose = true,   // also fire an update event when the user closes the picker box.
   } = {},
   initValue = null) {
 
   moment.locale(locale)
+
+  let isDisplayed = false
 
   const root = document.getElementById(id)
 
@@ -212,10 +215,15 @@ export function init (
   function hideAndResetTable () {
     mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
     dateDropdown.style.display = 'none'
+    isDisplayed = false
   }
 
-  function updateAfterClick () {
-    padSelectedDay()
+  function updateAfterClick ({pad = true} = {}) {
+    if (pad) {
+      padSelectedDay()
+    } else {
+      selectedDay.set({seconds: 0, milliseconds: 0})
+    }
     updateValue()
     hideAndResetTable()
   }
@@ -272,7 +280,7 @@ export function init (
             'minute': now.minute(),
             'second': now.second(),
           })
-          updateAfterClick()
+          updateAfterClick({pad: false})
         }
         e.stopPropagation()
       },
@@ -299,12 +307,19 @@ export function init (
   inputField.addEventListener('click', function (e) {
     hideBluepickerElements()
     dateDropdown.style.display = 'block'
+    isDisplayed = true
     e.stopPropagation()
   }, false)
 
-  document.addEventListener('click', () => {
-    hideBluepickerElements()
-    hideAndResetTable()
+  document.addEventListener('click', (e) => {
+    if (isDisplayed) {
+      hideBluepickerElements()
+      if (updateOnClose) {
+        updateAfterClick()
+      } else {
+        hideAndResetTable()
+      }
+    }
   })
 }
 
