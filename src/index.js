@@ -290,6 +290,11 @@ export function init (
   dateDropdown.appendChild(mainTable)
   hideAndResetTable()
 
+  let valueBeforeFocus = null
+  inputField.addEventListener('focus', function (e) {
+    valueBeforeFocus = inputField.value
+  })
+
   inputField.addEventListener('change', function (e) {
     let newDay = null
     if (utcMode) {
@@ -314,7 +319,7 @@ export function init (
   document.addEventListener('click', (e) => {
     if (isDisplayed) {
       hideBluepickerElements()
-      if (updateOnClose) {
+      if (valueBeforeFocus !== inputField.value && updateOnClose) {
         updateAfterClick()
       } else {
         hideAndResetTable()
