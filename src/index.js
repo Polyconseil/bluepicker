@@ -203,13 +203,17 @@ export function init (
     }
   }
 
+  function nextInputValue () {
+    if (utcMode) {
+      return selectedDay.format(format)
+    } else {
+      return selectedDay.local().format(format)
+    }
+  }
+
   function updateValue () {
     dispatchUpdateEvent()
-    if (utcMode) {
-      inputField.value = selectedDay.format(format)
-    } else {
-      inputField.value = selectedDay.local().format(format)
-    }
+    inputField.value = nextInputValue()
   }
 
   function hideAndResetTable () {
@@ -319,7 +323,9 @@ export function init (
   document.addEventListener('click', (e) => {
     if (isDisplayed) {
       hideBluepickerElements()
-      if (valueBeforeFocus !== inputField.value && updateOnClose) {
+      if (nextInputValue() !== inputField.value && updateOnClose) {
+        updateAfterClick()
+      } else if (valueBeforeFocus !== inputField.value && updateOnClose) {
         updateAfterClick()
       } else {
         hideAndResetTable()
