@@ -324,7 +324,7 @@ export function init (
     if (isDisplayed) {
       hideBluepickerElements()
       if (nextInputValue() !== inputField.value && updateOnClose) {
-        updateAfterClick()
+        updateAfterClick({'pad': false})
       } else if (valueBeforeFocus !== inputField.value && updateOnClose) {
         updateAfterClick()
       } else {
