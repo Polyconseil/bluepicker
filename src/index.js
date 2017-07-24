@@ -146,9 +146,9 @@ export function init (
 
   const tzField = root.getElementsByClassName('timezone')[0]
   if (tzField) {
-    switchTzField(null, utcMode)
+    switchTzField(utcMode)
     tzField.style.cursor = 'pointer'
-    tzField.addEventListener('click', switchTzField)
+    tzField.addEventListener('click', () => switchTzField())
   }
 
   let selectedDay = null
@@ -183,7 +183,7 @@ export function init (
     root.dispatchEvent(event)
   }
 
-  function switchTzField (event, forceUtc) {
+  function switchTzField (forceUtc, doUpdate = true) {
     const isForced = typeof forceUtc !== 'undefined'
     if ((isForced && forceUtc === true) || (!isForced && tzField.innerHTML !== 'UTC')) {
       tzField.innerHTML = 'UTC'
@@ -192,7 +192,7 @@ export function init (
       tzField.innerHTML = dateutils.getTzOffset()
       utcMode = false
     }
-    dispatchUpdateEvent()
+    if (doUpdate) dispatchUpdateEvent()
   }
 
   function padSelectedDay () {
@@ -334,9 +334,10 @@ export function init (
   })
 
   return {
-    update: function (value) {
-      selectedDay = moment(initValue)
+    update: function (value, forceUtc) {
+      selectedDay = moment(value)
       inputField.value = selectedDay.format(format)
+      switchTzField(forceUtc, false)
     },
   }
 }
