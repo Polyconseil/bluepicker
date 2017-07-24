@@ -332,6 +332,13 @@ export function init (
       }
     }
   })
+
+  return {
+    update: function (value) {
+      selectedDay = moment(initValue)
+      inputField.value = selectedDay.format(format)
+    },
+  }
 }
 
 const bluepicker = {
