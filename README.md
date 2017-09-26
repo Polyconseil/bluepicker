@@ -72,6 +72,7 @@ function onPickerChange ({id, format, value, utcMode}) {
   // value is the momentJS instance of the moment that just changed
   // utcMode keeps track if the picker is currently in UTC mode or not.
 }
+```
 
 ## License
 
