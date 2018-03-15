@@ -45,6 +45,10 @@
   }
 }
 
+:local(.selectedInterval) {
+  background-color: #eee;
+}
+
 :local(.nowButton) {
   padding: 5px 2px;
 }

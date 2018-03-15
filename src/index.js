@@ -13,6 +13,7 @@ import minuteHeaderTemplate from 'src/table-header-minute.dot'
 import tableTemplate from 'src/table.dot'
 
 const MODE_DAYS = 'days'
+const MODE_DAYS_INTERVAL = 'days-interval'
 const MODE_HOURS = 'hours'
 const MODE_MINUTES = 'minutes'
 
@@ -120,14 +121,15 @@ function tableForMinutes (dayWithHour) {
 export function init (
   id,
   {
-    callback = null,        // function to call whenever an update happens.
-    format = '',            // format of output. Blank means ISO format.
+    callback = null,              // function to call whenever an update happens.
+    format = '',                  // format of output. Blank means ISO format.
+    dateIntervalSeparator = '/',  // separator between two dates when used with days-interval mode
     locale = 'en',
-    mode = MODE_MINUTES,    // switches from a DAY picker, to a HOUR picker and even a MINUTE one.
-    utcMode = false,        // when true, the output value is in UTC.
-    padToBoundary = true,   // pad output value to the day, hour or minute clicked.
-    nowButtonText = 'Now',  // the calling app is responsible for translating this.
-    updateOnClose = true,   // also fire an update event when the user closes the picker box.
+    mode = MODE_MINUTES,          // switches from a DAY picker, to a HOUR picker and even a MINUTE one.
+    utcMode = false,              // when true, the output value is in UTC.
+    padToBoundary = true,         // pad output value to the day, hour or minute clicked.
+    nowButtonText = 'Now',        // the calling app is responsible for translating this.
+    updateOnClose = true,         // also fire an update event when the user closes the picker box.
   } = {},
   initValue = null) {
 
@@ -151,6 +153,7 @@ export function init (
     tzField.addEventListener('click', () => switchTzField())
   }
 
+  let selectedDateIntervalStart = null
   let selectedDay = null
   if (initValue) {
     selectedDay = moment(initValue)
@@ -204,6 +207,14 @@ export function init (
   }
 
   function nextInputValue () {
+    if (mode === MODE_DAYS_INTERVAL) {
+      const dateFormat = format || 'YYYY-MM-DD'
+      if (selectedDateIntervalStart) {
+        const max = moment.max(selectedDateIntervalStart, selectedDay)
+        const min = moment.min(selectedDateIntervalStart, selectedDay)
+        return min.format(dateFormat) + dateIntervalSeparator + max.format(dateFormat)
+      } else return selectedDay.format(dateFormat)
+    }
     if (utcMode) {
       return selectedDay.format(format)
     } else {
@@ -211,9 +222,12 @@ export function init (
     }
   }
 
-  function updateValue () {
+  function updateValue ({clean = true} = {}) {
     dispatchUpdateEvent()
     inputField.value = nextInputValue()
+    if (clean) {
+      selectedDateIntervalStart = null
+    }
   }
 
   function hideAndResetTable () {
@@ -253,6 +267,13 @@ export function init (
           })
           if (mode === MODE_DAYS) {
             updateAfterClick()
+          } else if (mode === MODE_DAYS_INTERVAL) {
+            if (selectedDateIntervalStart) {
+              updateAfterClick()
+            } else {
+              updateValue({clean: false})
+              selectedDateIntervalStart = selectedDay.clone()
+            }
           } else if (mode === MODE_HOURS || mode === MODE_MINUTES) {
             mainTable.innerHTML = tableForHours(selectedDay)
           } else {
@@ -284,9 +305,37 @@ export function init (
             'minute': now.minute(),
             'second': now.second(),
           })
-          updateAfterClick({pad: false})
+          if (mode === MODE_DAYS_INTERVAL && !selectedDateIntervalStart) {
+            updateValue({clean: false})
+            selectedDateIntervalStart = selectedDay.clone()
+            selectedDateIntervalStart.set({
+              'hour': 0,
+              'minute': 0,
+              'second': 0,
+            })
+          } else {
+            updateAfterClick({pad: false})
+          }
         }
         e.stopPropagation()
+      },
+      mouseover: function (e) {
+        if (mode !== MODE_DAYS_INTERVAL || !selectedDateIntervalStart) {
+          return
+        }
+        const endIntervalDate = moment(e.target.dataset.value)
+        for (let el of Array.from(root.querySelectorAll('.' + styles.dow))) {
+          const currentDate = moment(el.dataset.value)
+          if (
+            currentDate.isSame(selectedDateIntervalStart, 'day') || currentDate.isSame(endIntervalDate, 'day') ||
+            (selectedDateIntervalStart.isBefore(currentDate, 'day') && currentDate.isBefore(endIntervalDate, 'day')) ||
+            (selectedDateIntervalStart.isAfter(currentDate, 'day') && currentDate.isAfter(endIntervalDate, 'day'))
+          ) {
+            el.classList.add(styles.selectedInterval)
+          } else {
+            el.classList.remove(styles.selectedInterval)
+          }
+        }
       },
     }
   )
