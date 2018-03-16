@@ -16,5 +16,5 @@ export function getTzOffset () {
   const sign = offset <= 0 ? '+' : '-'
   const hours = Math.ceil(Math.abs(offset) / 60)
   const minutes = Math.abs(offset) % 60
-  return `UTC${sign}${formatHour(hours, minutes)}`
+  return `${sign}${formatHour(hours, minutes)}`
 }

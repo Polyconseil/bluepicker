@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "8.5.0"
+dist: trusty
+sudo: required
+addons:
+  chrome: stable  # run the tests with Chrome headless

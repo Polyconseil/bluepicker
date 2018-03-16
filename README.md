@@ -1,5 +1,7 @@
 # Bluepicker
 
+<img src="https://travis-ci.org/Polyconseil/bluepicker.svg?branch=master">
+
 A beautiful VanillaJS date or datetime picker that also supports local or UTC input.
 
 

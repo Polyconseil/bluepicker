@@ -1,6 +1,5 @@
 import moment from 'moment'
 
-
 import * as dateutils from 'src/dateutils.js'
 import * as utils from 'src/utils.js'
 
@@ -192,7 +191,7 @@ export function init (
       tzField.innerHTML = 'UTC'
       utcMode = true
     } else {
-      tzField.innerHTML = dateutils.getTzOffset()
+      tzField.innerHTML = `UTC${dateutils.getTzOffset()}`
       utcMode = false
     }
     if (doUpdate) dispatchUpdateEvent()
