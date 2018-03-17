@@ -4,6 +4,7 @@
 
 A beautiful VanillaJS date or datetime picker that also supports local or UTC input.
 
+<img width="300" alt="Bluepicker demo" src="./bluepicker.gif">
 
 ## Why ?
 
