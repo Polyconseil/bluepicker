@@ -120,6 +120,7 @@ function tableForMinutes (dayWithHour) {
 export function init (
   id,
   {
+    /* eslint-disable no-multi-spaces */
     callback = null,              // function to call whenever an update happens.
     format = '',                  // format of output. Blank means ISO format.
     dateIntervalSeparator = '/',  // separator between two dates when used with days-interval mode
@@ -129,6 +130,7 @@ export function init (
     padToBoundary = true,         // pad output value to the day, hour or minute clicked.
     nowButtonText = 'Now',        // the calling app is responsible for translating this.
     updateOnClose = true,         // also fire an update event when the user closes the picker box.
+    /* eslint-enable no-multi-spaces */
   } = {},
   initValue = null) {
 
@@ -142,7 +144,7 @@ export function init (
 
   const dateDropdown = appendDropdownTo(root, [
     styles.bluepicker_date_dropdown,
-    'bluepicker__public',  // public CSS class allows for multi-instance dropdown cleaning
+    'bluepicker__public', // public CSS class allows for multi-instance dropdown cleaning
   ])
 
   const tzField = root.getElementsByClassName('timezone')[0]
@@ -171,7 +173,7 @@ export function init (
   }
 
   function dispatchUpdateEvent () {
-    if (!selectedDay) return  // do not bother if no value yet
+    if (!selectedDay) return // do not bother if no value yet
     const data = {
       id: id,
       format: format,
