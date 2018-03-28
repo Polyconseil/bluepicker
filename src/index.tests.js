@@ -29,18 +29,18 @@ describe('Bluepicker mode days', () => {
   afterEach(function () {
     document.body.removeChild(document.getElementById('root'))
   })
-  it('It should not display the table at init', () => {
+  it('should not display the table at init', () => {
     const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
     expect(dropdown.style.display).toBe('none')
   })
-  it('It should allow the selection of a day', () => {
+  it('should allow the selection of a day', () => {
     clickInputAndAssertDropdownIsVisible()
     const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
     const firstDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
     firstDateElt.click()
     const inputElt = document.querySelector('#root > input')
     const yearAndMonth = moment().format('YYYY-MM')
-    const offset = getTzOffset()
+    const offset = getTzOffset(moment(`${yearAndMonth}-15`))
     expect(inputElt.value).toEqual(`${yearAndMonth}-15T00:00:00${offset}`)
   })
 })
@@ -52,11 +52,11 @@ describe('Bluepicker mode hours', () => {
   afterEach(function () {
     document.body.removeChild(document.getElementById('root'))
   })
-  it('It should not display the table at init', () => {
+  it('should not display the table at init', () => {
     const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
     expect(dropdown.style.display).toBe('none')
   })
-  it('It should allow the selection of a day and an hour', () => {
+  it('should allow the selection of a day and an hour', () => {
     clickInputAndAssertDropdownIsVisible()
     const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
     const firstDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
@@ -69,7 +69,7 @@ describe('Bluepicker mode hours', () => {
     allHoursElts[2].click()
     const inputElt = document.querySelector('#root > input')
     const yearAndMonth = moment().format('YYYY-MM')
-    const offset = getTzOffset()
+    const offset = getTzOffset(moment(`${yearAndMonth}-15`))
     expect(inputElt.value).toEqual(`${yearAndMonth}-15T02:00:00${offset}`)
   })
 })
@@ -81,11 +81,11 @@ describe('Bluepicker mode minutes', () => {
   afterEach(function () {
     document.body.removeChild(document.getElementById('root'))
   })
-  it('It should not display the table at init', () => {
+  it('should not display the table at init', () => {
     const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
     expect(dropdown.style.display).toBe('none')
   })
-  it('It should allow the selection of a day an hour and minutes', () => {
+  it('should allow the selection of a day an hour and minutes', () => {
     clickInputAndAssertDropdownIsVisible()
     const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
     const firstDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
@@ -102,12 +102,12 @@ describe('Bluepicker mode minutes', () => {
     allMinutesElts[0].click()
     const inputElt = document.querySelector('#root > input')
     const yearAndMonth = moment().format('YYYY-MM')
-    const offset = getTzOffset()
+    const offset = getTzOffset(moment(`${yearAndMonth}-15`))
     expect(inputElt.value).toEqual(`${yearAndMonth}-15T23:00:00${offset}`)
   })
-  it('It should not change the hour set manually by the user', () => {
+  it('should not change the hour set manually by the user', () => {
     clickInputAndAssertDropdownIsVisible()
-    const offset = getTzOffset()
+    const offset = getTzOffset(moment('2012-03-03T22:45:32'))
     const inputElt = document.querySelector('#root > input')
     inputElt.value = `2012-03-03T22:45:32${offset}`
     dispatchEvent(inputElt, 'change')

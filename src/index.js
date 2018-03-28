@@ -190,7 +190,7 @@ export function init (
       tzField.innerHTML = 'UTC'
       utcMode = true
     } else {
-      tzField.innerHTML = `UTC${dateutils.getTzOffset()}`
+      tzField.innerHTML = `UTC${dateutils.getTzOffset(selectedDay)}`
       utcMode = false
     }
     if (doUpdate) dispatchUpdateEvent()

@@ -11,9 +11,9 @@ export function formatHour (hour, minutes = 0) {
   return padStart(`${hour}`, 2, '0') + ':' + padStart(`${minutes}`, 2, '0')
 }
 
-export function getTzOffset () {
-  const offset = new Date().getTimezoneOffset()
-  const sign = offset <= 0 ? '+' : '-'
+export function getTzOffset (datetime) {
+  const offset = (datetime || moment()).utcOffset()
+  const sign = offset <= 0 ? '-' : '+'
   const hours = Math.ceil(Math.abs(offset) / 60)
   const minutes = Math.abs(offset) % 60
   return `${sign}${formatHour(hours, minutes)}`
