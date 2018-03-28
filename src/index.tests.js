@@ -22,50 +22,6 @@ function clickInputAndAssertDropdownIsVisible () {
   expect(dropdown.style.display).toBe('block')
 }
 
-describe('Bluepicker mode days-interval', () => {
-  beforeEach(function () {
-    setUpBluePicker({mode: 'days-interval'})
-  })
-  afterEach(function () {
-    document.body.removeChild(document.getElementById('root'))
-  })
-  it('It should not display the table at init', () => {
-    const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
-    expect(dropdown.style.display).toBe('none')
-  })
-  it('It should allow the selection of a date interval in days-interval mode (basic)', () => {
-    clickInputAndAssertDropdownIsVisible()
-    const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
-    const firstDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
-    const secondDateElt = allDatesElts.filter((el) => el.textContent === '19')[0]
-    firstDateElt.click()
-    dispatchEvent(secondDateElt, 'mouseover')
-    const highlightedText = Array.from(document.querySelectorAll(`.${styles.selectedInterval}`)).map((el) => el.textContent)
-    expect(highlightedText).toEqual(['15', '16', '17', '18', '19'])
-  })
-  it('It should allow the selection of a date interval in days-interval mode (reverse)', () => {
-    clickInputAndAssertDropdownIsVisible()
-    const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
-    const firstDateElt = allDatesElts.filter((el) => el.textContent === '19')[0]
-    const secondDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
-    firstDateElt.click()
-    dispatchEvent(secondDateElt, 'mouseover')
-    const highlightedText = Array.from(document.querySelectorAll(`.${styles.selectedInterval}`)).map((el) => el.textContent)
-    expect(highlightedText).toEqual(['15', '16', '17', '18', '19'])
-  })
-  it('It should set the input value to a correct date interval', () => {
-    clickInputAndAssertDropdownIsVisible()
-    const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
-    const firstDateElt = allDatesElts.filter((el) => el.textContent === '19')[0]
-    const secondDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
-    firstDateElt.click()
-    secondDateElt.click()
-    const inputElt = document.querySelector('#root > input')
-    const yearAndMonth = moment().format('YYYY-MM')
-    expect(inputElt.value).toEqual(`${yearAndMonth}-15/${yearAndMonth}-19`)
-  })
-})
-
 describe('Bluepicker mode days', () => {
   beforeEach(function () {
     setUpBluePicker({mode: 'days'})
