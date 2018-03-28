@@ -3,10 +3,10 @@ import { getTzOffset } from 'src/dateutils.js'
 import bluepicker from 'src/index.js'
 import styles from 'src/styles.css'
 
-
-function setUpBluePicker (config) {
-  document.body.innerHTML = '<div id="root"><input type="text"></input></div>'
-  bluepicker.init('root', config)
+function setUpBluePicker (config, withTzField = false) {
+  const tzField = withTzField ? '<span class="timezone"></span>' : ''
+  document.body.innerHTML = `<div id="root"><input type="text"></input>${tzField}</div>`
+  bluepicker.init('root', config, null)
 }
 
 function dispatchEvent (element, eventType) {
@@ -107,9 +107,8 @@ describe('Bluepicker mode minutes', () => {
   })
   it('should not change the hour set manually by the user', () => {
     clickInputAndAssertDropdownIsVisible()
-    const offset = getTzOffset(moment('2012-03-03T22:45:32'))
     const inputElt = document.querySelector('#root > input')
-    inputElt.value = `2012-03-03T22:45:32${offset}`
+    inputElt.value = '2012-03-03T22:45:32+01:00'
     dispatchEvent(inputElt, 'change')
 
     clickInputAndAssertDropdownIsVisible()
@@ -119,6 +118,30 @@ describe('Bluepicker mode minutes', () => {
     document.body.click()
     const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
     expect(dropdown.style.display).toBe('none')
-    expect(inputElt.value).toEqual(`2012-03-15T22:45:00${offset}`)
+    expect(inputElt.value).toEqual('2012-03-15T22:45:00+01:00')
+  })
+})
+
+describe('Bluepicker with tz field', () => {
+  beforeEach(function () {
+    const withTzField = true
+    setUpBluePicker({mode: 'hour'}, withTzField)
+  })
+  afterEach(function () {
+    document.body.removeChild(document.getElementById('root'))
+  })
+  it('should adapt tz field to the selected date', () => {
+    clickInputAndAssertDropdownIsVisible()
+    const inputElt = document.querySelector('#root > input')
+    inputElt.value = '2018-03-12T22:45:32+01:00' // before the clock change in France
+    dispatchEvent(inputElt, 'change')
+
+    const tzField = document.querySelector('#root .timezone')
+    expect(tzField.innerHTML).toBe('UTC+01:00')
+
+    inputElt.value = '2018-03-28T22:45:32+01:00' // after the clock change in France
+    dispatchEvent(inputElt, 'change')
+    expect(inputElt.value).toBe('2018-03-28T23:45:32+02:00')
+    expect(tzField.innerHTML).toBe('UTC+02:00')
   })
 })

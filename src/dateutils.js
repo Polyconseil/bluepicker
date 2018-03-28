@@ -13,7 +13,7 @@ export function formatHour (hour, minutes = 0) {
 
 export function getTzOffset (datetime) {
   const offset = (datetime || moment()).utcOffset()
-  const sign = offset <= 0 ? '-' : '+'
+  const sign = offset >= 0 ? '+' : '-'
   const hours = Math.ceil(Math.abs(offset) / 60)
   const minutes = Math.abs(offset) % 60
   return `${sign}${formatHour(hours, minutes)}`

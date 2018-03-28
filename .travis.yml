@@ -5,3 +5,5 @@ dist: trusty
 sudo: required
 addons:
   chrome: stable  # run the tests with Chrome headless
+before_install:
+- export TZ=Europe/Paris  # run the test in our timezone, which is more tricky than UTC

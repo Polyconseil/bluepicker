@@ -187,13 +187,18 @@ export function init (
   function switchTzField (forceUtc, doUpdate = true) {
     const isForced = typeof forceUtc !== 'undefined'
     if ((isForced && forceUtc === true) || (!isForced && tzField.innerHTML !== 'UTC')) {
-      tzField.innerHTML = 'UTC'
       utcMode = true
     } else {
-      tzField.innerHTML = `UTC${dateutils.getTzOffset(selectedDay)}`
       utcMode = false
     }
+    updateTzFieldHTML(utcMode)
+    inputField.value = nextInputValue() // put the inputField value in the correct TZ
     if (doUpdate) dispatchUpdateEvent()
+  }
+
+  function updateTzFieldHTML (utcMode) {
+    const offset = utcMode ? '' : dateutils.getTzOffset(selectedDay)
+    tzField.innerHTML = `UTC${offset}`
   }
 
   function padSelectedDay () {
@@ -215,6 +220,10 @@ export function init (
   function updateValue () {
     dispatchUpdateEvent()
     inputField.value = nextInputValue()
+    if (tzField && !utcMode) {
+      // update the offset based on the selected date
+      updateTzFieldHTML(utcMode)
+    }
   }
 
   function hideAndResetTable () {
