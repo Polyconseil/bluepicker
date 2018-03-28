@@ -67,7 +67,7 @@ describe('Bluepicker mode days', () => {
     inputElt.value = date
     dispatchEvent(inputElt, 'change')
   })
-  it('should allow the selection of a day', () => {
+  it('should allow the selection of a day and its manual reset', (done) => {
     clickInputAndAssertDropdownIsVisible()
     const allDatesElts = Array.from(document.querySelectorAll(`.${styles.dow}`))
     const firstDateElt = allDatesElts.filter((el) => el.textContent === '15')[0]
@@ -76,6 +76,19 @@ describe('Bluepicker mode days', () => {
     const yearAndMonth = moment().format('YYYY-MM')
     const offset = getTzOffset(moment(`${yearAndMonth}-15`))
     expect(inputElt.value).toEqual(`${yearAndMonth}-15T00:00:00${offset}`)
+
+    // try to reset it and check that the event is sent upstream
+    const root = document.querySelector('#root')
+    let listener = null
+    listener = (e) => {
+      expect(e.detail.value).toBe(null)
+      root.removeEventListener('bluepicker:update', listener)
+      done()
+    }
+    root.addEventListener('bluepicker:update', listener)
+    inputElt.value = ''
+    dispatchEvent(inputElt, 'change')
+    expect(inputElt.value).toEqual('')
   })
 })
 
