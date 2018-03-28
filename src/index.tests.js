@@ -22,6 +22,26 @@ function clickInputAndAssertDropdownIsVisible () {
   expect(dropdown.style.display).toBe('block')
 }
 
+
+describe('Bluepicker mode days', () => {
+  afterEach(function () {
+    document.body.removeChild(document.getElementById('root'))
+  })
+  it('should propagate via callback', (done) => {
+    const date = '2012-03-03T22:45:32'
+    function callback (detail) {
+      expect(detail.value.format('YYYY-MM-DDTHH:mm:ss')).toBe(date)
+      delete detail['value']
+      expect(detail).toEqual({id: 'root', format: '', utcMode: false})
+      done()
+    }
+    setUpBluePicker({mode: 'days', callback: callback})
+    const inputElt = document.querySelector('#root > input')
+    inputElt.value = date
+    dispatchEvent(inputElt, 'change')
+  })
+})
+
 describe('Bluepicker mode days', () => {
   beforeEach(function () {
     setUpBluePicker({mode: 'days'})
@@ -32,6 +52,20 @@ describe('Bluepicker mode days', () => {
   it('should not display the table at init', () => {
     const dropdown = document.querySelector(`.${styles.bluepicker_date_dropdown}`)
     expect(dropdown.style.display).toBe('none')
+  })
+  it('should propagate via custom event', (done) => {
+    const inputElt = document.querySelector('#root > input')
+    const date = '2012-03-03T22:45:32'
+    const root = document.querySelector('#root')
+    let listener = null
+    listener = (e) => {
+      expect(e.detail).toEqual({value: moment(date), id: 'root', format: '', utcMode: false})
+      root.removeEventListener('bluepicker:update', listener)
+      done()
+    }
+    root.addEventListener('bluepicker:update', listener)
+    inputElt.value = date
+    dispatchEvent(inputElt, 'change')
   })
   it('should allow the selection of a day', () => {
     clickInputAndAssertDropdownIsVisible()

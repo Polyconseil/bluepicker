@@ -180,7 +180,7 @@ export function init (
     if (callback) {
       callback(data)
     }
-    const event = new CustomEvent('bluepicker:update', data)
+    const event = new CustomEvent('bluepicker:update', {detail: data})
     root.dispatchEvent(event)
   }
 
