@@ -65,7 +65,7 @@ bluepicker.init('picker_id', {callback: onPickerChange})
 
 // or
 
-document.addEventListener('bluepicker:update', onPickerChange)
+document.addEventListener('bluepicker:update', (e) => onPickerChange(e.detail))
 
 // fires
 
