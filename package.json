@@ -1,6 +1,6 @@
 {
   "name": "bluepicker",
-  "version": "0.4.6",
+  "version": "0.5.0",
   "description": "Vanilla date, time and range picker",
   "main": "dist/index.js",
   "publishConfig": {
