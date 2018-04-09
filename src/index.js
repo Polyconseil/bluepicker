@@ -146,17 +146,17 @@ export function init (
     'bluepicker__public', // public CSS class allows for multi-instance dropdown cleaning
   ])
 
+  let selectedDay = null
+  if (initValue) {
+    selectedDay = moment(initValue)
+    inputField.value = selectedDay.format(format)
+  }
+
   const tzField = root.getElementsByClassName('timezone')[0]
   if (tzField) {
     switchTzField(utcMode)
     tzField.style.cursor = 'pointer'
     tzField.addEventListener('click', () => switchTzField())
-  }
-
-  let selectedDay = null
-  if (initValue) {
-    selectedDay = moment(initValue)
-    inputField.value = selectedDay.format(format)
   }
 
   function dispatchUpdateEvent () {

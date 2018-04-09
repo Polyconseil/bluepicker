@@ -170,14 +170,27 @@ describe('Bluepicker mode minutes', () => {
 })
 
 describe('Bluepicker with tz field', () => {
-  beforeEach(function () {
-    const withTzField = true
-    setUpBluePicker({mode: 'hour'}, withTzField)
-  })
   afterEach(function () {
     document.body.removeChild(document.getElementById('root'))
   })
+  it('should adapt tz field to the init date', (done) => {
+    const initDate = '2012-01-12T00:03Z'
+    let listener = null
+    listener = (e) => {
+      expect(e.detail).toEqual({value: moment(initDate), id: 'root', format: '', utcMode: false})
+      const tzField = document.querySelector('#root .timezone')
+      expect(tzField.innerHTML).toBe('UTC+01:00')
+      root.removeEventListener('bluepicker:update', listener)
+      done()
+    }
+    document.body.innerHTML = '<div id="root"><input type="text"></input><span class="timezone"></span></div>'
+    const root = document.querySelector('#root')
+    root.addEventListener('bluepicker:update', listener)
+    bluepicker.init('root', {mode: 'hour'}, initDate)
+  }),
   it('should adapt tz field to the selected date', () => {
+    const withTzField = true
+    setUpBluePicker({mode: 'hour'}, withTzField)
     clickInputAndAssertDropdownIsVisible()
     const inputElt = document.querySelector('#root > input')
     inputElt.value = '2018-03-12T22:45:32+01:00' // before the clock change in France
