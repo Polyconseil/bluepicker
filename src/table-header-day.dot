@@ -1,6 +1,6 @@
 <tr>
   <th class="{{=it.styles.left}} {{=it.styles.fakelink}}">&larr;</th>
-  <th colspan="5">{{=it.monthYear}}</th>
+  <th class="{{=it.styles.tableHeader}}" colspan="5">{{=it.monthYear}}</th>
   <th class="{{=it.styles.right}} {{=it.styles.fakelink}}">&rarr;</th>
 </tr>
 <tr>

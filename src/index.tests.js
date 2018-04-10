@@ -90,6 +90,59 @@ describe('Bluepicker mode days', () => {
     dispatchEvent(inputElt, 'change')
     expect(inputElt.value).toEqual('')
   })
+  it('should allow changing the month during the selection process', () => {
+    clickInputAndAssertDropdownIsVisible()
+    const headerFormat = 'YYYY-MMM'
+    expect(document.querySelector(`.${styles.tableHeader}`).textContent).toBe(moment().format(headerFormat))
+
+    function click(leftOrRight) {
+      // the table is rebuilt at every click => we need to refetch the buttons after each click.
+      let button = null
+      if (leftOrRight === 'left') {
+        button = document.querySelector(`.${styles.left}`)
+      } else if (leftOrRight === 'right') {
+        button = document.querySelector(`.${styles.right}`)
+      } else throw "click: Invalid value expected left or right."
+      button.click()
+    }
+
+    click('left')
+    click('left')
+    expect(document.querySelector(`.${styles.tableHeader}`).textContent).toBe(moment().subtract(2, 'month').format(headerFormat))
+
+    click('right')
+    click('right')
+    click('right')
+    click('right')
+    click('right')
+    expect(document.querySelector(`.${styles.tableHeader}`).textContent).toBe(moment().add(3, 'month').format(headerFormat))
+  })
+  it('should allow setting the date to now', async (done) => {
+    clickInputAndAssertDropdownIsVisible()
+    const nowButton = document.querySelector(`.${styles.nowButton}`)
+    const root = document.querySelector('#root')
+    const inputElt = document.querySelector('#root > input')
+
+    let resolveEventPropagation = null
+    const resolveEventPropagationPromise = new Promise((resolve) => {
+      resolveEventPropagation = resolve
+    })
+
+    const listener = (e) => {
+      // check that the event is well dispatched and that the input element is updated
+      expect(e.detail.value.diff(moment(), 'seconds')).toBeLessThan(61)  // seconds are set to 0 when clicking now
+      root.removeEventListener('bluepicker:update', listener)
+      resolveEventPropagation()
+    }
+    root.addEventListener('bluepicker:update', listener)
+
+    nowButton.click()
+
+    const yearAndMonthAndDay = moment().format('YYYY-MM-DD')
+    expect(inputElt.value.slice(0, 10)).toEqual(yearAndMonthAndDay)
+    await resolveEventPropagationPromise
+    done()
+  })
 })
 
 describe('Bluepicker mode hours', () => {
