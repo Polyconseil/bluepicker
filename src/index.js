@@ -145,13 +145,17 @@ export function init (
     'bluepicker__public', // public CSS class allows for multi-instance dropdown cleaning
   ])
 
-  let selectedDay = null
-  if (initValue) {
-    selectedDay = moment(initValue)
-    inputField.value = selectedDay.format(format)
-  } else {
+  let selectedDay = {
+    // The component needs to have a not null value to work.
+    // However we need to know whether the internal value was
+    // intentionnaly set by the user or not.
+    value: null,
+    setByUser: false,
+  }
+
+  function initDay () {
     const today = moment()
-    selectedDay = moment({
+    return moment({
       year: today.year(),
       month: today.month(),
       date: 1,
@@ -160,6 +164,15 @@ export function init (
       seconds: 0,
       milliseconds: 0,
     })
+  }
+
+  if (initValue) {
+    selectedDay.value = moment(initValue)
+    selectedDay.setByUser = true
+    inputField.value = selectedDay.value.format(format)
+  } else {
+    selectedDay.value = initDay()
+    selectedDay.setByUser = false
   }
 
   const tzField = root.getElementsByClassName('timezone')[0]
@@ -171,11 +184,10 @@ export function init (
 
 
   function dispatchUpdateEvent () {
-    if (!selectedDay) return // do not bother if no value yet
     const data = {
       id: id,
       format: format,
-      value: selectedDay,
+      value: selectedDay.setByUser ? selectedDay.value : null,
       utcMode: utcMode,
     }
     if (callback) {
@@ -198,23 +210,24 @@ export function init (
   }
 
   function updateTzFieldHTML (utcMode) {
-    const offset = utcMode ? '' : dateutils.getTzOffset(selectedDay)
+    const offset = utcMode ? '' : dateutils.getTzOffset(selectedDay.value)
     tzField.innerHTML = `UTC${offset}`
   }
 
   function padSelectedDay () {
     if (padToBoundary) {
-      if (mode === MODE_DAYS) selectedDay.set({hours: 0, minutes: 0})
-      if (mode === MODE_HOURS) selectedDay.set({minutes: 0})
-      selectedDay.set({seconds: 0, milliseconds: 0})
+      if (mode === MODE_DAYS) selectedDay.value.set({hours: 0, minutes: 0})
+      if (mode === MODE_HOURS) selectedDay.value.set({minutes: 0})
+      selectedDay.value.set({seconds: 0, milliseconds: 0})
     }
   }
 
   function nextInputValue () {
+    if (!selectedDay.setByUser) return ''
     if (utcMode) {
-      return selectedDay.format(format)
+      return selectedDay.value.format(format)
     } else {
-      return selectedDay.local().format(format)
+      return selectedDay.value.local().format(format)
     }
   }
 
@@ -228,7 +241,7 @@ export function init (
   }
 
   function hideAndResetTable () {
-    mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
+    mainTable.innerHTML = tableForDay(selectedDay.value, nowButtonText)
     dateDropdown.style.display = 'none'
     isDisplayed = false
   }
@@ -237,8 +250,9 @@ export function init (
     if (pad) {
       padSelectedDay()
     } else {
-      selectedDay.set({seconds: 0, milliseconds: 0})
+      selectedDay.value.set({seconds: 0, milliseconds: 0})
     }
+    selectedDay.setByUser = true
     updateValue()
     hideAndResetTable()
   }
@@ -250,14 +264,14 @@ export function init (
       click: function (e) {
         let t = e.target
         if (t.classList.contains(styles.left)) {
-          selectedDay.subtract(1, 'month')
-          mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
+          selectedDay.value.subtract(1, 'month')
+          mainTable.innerHTML = tableForDay(selectedDay.value, nowButtonText)
         } else if (t.classList.contains(styles.right)) {
-          selectedDay.add(1, 'month')
-          mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
+          selectedDay.value.add(1, 'month')
+          mainTable.innerHTML = tableForDay(selectedDay.value, nowButtonText)
         } else if (t.classList.contains(styles.dow)) {
           const clickedDay = moment(utils.getDataValue(t))
-          selectedDay.set({
+          selectedDay.value.set({
             'year': clickedDay.year(),
             'month': clickedDay.month(),
             'date': clickedDay.date(),
@@ -265,21 +279,21 @@ export function init (
           if (mode === MODE_DAYS) {
             updateAfterClick()
           } else if (mode === MODE_HOURS || mode === MODE_MINUTES) {
-            mainTable.innerHTML = tableForHours(selectedDay)
+            mainTable.innerHTML = tableForHours(selectedDay.value)
           } else {
             console.warn('Should never get there !')
           }
         } else if (t.classList.contains(styles.hod)) {
-          selectedDay.hour(utils.getIntDataValue(t))
+          selectedDay.value.hour(utils.getIntDataValue(t))
           if (mode === MODE_HOURS) {
             updateAfterClick()
           } else if (mode === MODE_MINUTES) {
-            mainTable.innerHTML = tableForMinutes(selectedDay)
+            mainTable.innerHTML = tableForMinutes(selectedDay.value)
           } else {
             console.warn('Should never get there !')
           }
         } else if (t.classList.contains(styles.moh)) {
-          selectedDay.minute(utils.getIntDataValue(t))
+          selectedDay.value.minute(utils.getIntDataValue(t))
           if (mode === MODE_MINUTES) {
             updateAfterClick()
           } else {
@@ -287,7 +301,7 @@ export function init (
           }
         } else if (t.classList.contains(styles.nowButton)) {
           const now = moment()
-          selectedDay.set({
+          selectedDay.value.set({
             'year': now.year(),
             'month': now.month(),
             'date': now.date(),
@@ -318,10 +332,14 @@ export function init (
       newDay = moment(inputField.value)
     }
     if (newDay.isValid()) {
-      selectedDay = newDay
-      updateValue()
-      hideAndResetTable()
+      selectedDay.value = newDay
+      selectedDay.setByUser = true
+    } else {
+      selectedDay.value = initDay()
+      selectedDay.setByUser = false
     }
+    updateValue()
+    hideAndResetTable()
   })
 
   inputField.addEventListener('click', function (e) {
@@ -346,8 +364,9 @@ export function init (
 
   return {
     update: function (value, forceUtc) {
-      selectedDay = moment(value)
-      inputField.value = selectedDay.format(format)
+      selectedDay.value = moment(value)
+      selectedDay.setByUser = true
+      inputField.value = selectedDay.value.format(format)
       switchTzField(forceUtc, false)
     },
   }
