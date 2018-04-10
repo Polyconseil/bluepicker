@@ -52,7 +52,6 @@ function enumerateDaysOfCalendar (currentDay, format = 'D') {
 
 
 function tableForDay (day, nowButtonText) {
-  day = day || moment()
   return tableTemplate({
     styles: styles,
     thead: dayHeaderTemplate({
@@ -150,6 +149,17 @@ export function init (
   if (initValue) {
     selectedDay = moment(initValue)
     inputField.value = selectedDay.format(format)
+  } else {
+    const today = moment()
+    selectedDay = moment({
+      year: today.year(),
+      month: today.month(),
+      date: 1,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    })
   }
 
   const tzField = root.getElementsByClassName('timezone')[0]
@@ -159,7 +169,9 @@ export function init (
     tzField.addEventListener('click', () => switchTzField())
   }
 
+
   function dispatchUpdateEvent () {
+    if (!selectedDay) return // do not bother if no value yet
     const data = {
       id: id,
       format: format,
@@ -199,7 +211,6 @@ export function init (
   }
 
   function nextInputValue () {
-    if (!selectedDay) return ''
     if (utcMode) {
       return selectedDay.format(format)
     } else {
@@ -246,7 +257,6 @@ export function init (
           mainTable.innerHTML = tableForDay(selectedDay, nowButtonText)
         } else if (t.classList.contains(styles.dow)) {
           const clickedDay = moment(utils.getDataValue(t))
-          selectedDay = selectedDay || moment()
           selectedDay.set({
             'year': clickedDay.year(),
             'month': clickedDay.month(),
@@ -302,15 +312,12 @@ export function init (
 
   inputField.addEventListener('change', function (e) {
     let newDay = null
-    if (inputField.value) {
-      if (utcMode) {
-        newDay = moment.utc(inputField.value)
-      } else {
-        newDay = moment(inputField.value)
-      }
+    if (utcMode) {
+      newDay = moment.utc(inputField.value)
+    } else {
+      newDay = moment(inputField.value)
     }
-    if (newDay == null || newDay.isValid()) {
-      // newDay = null => the user wants to reset the field
+    if (newDay.isValid()) {
       selectedDay = newDay
       updateValue()
       hideAndResetTable()
