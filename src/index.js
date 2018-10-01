@@ -204,8 +204,8 @@ export function init (
     } else {
       utcMode = false
     }
-    updateTzFieldHTML(utcMode)
     inputField.value = nextInputValue() // put the inputField value in the correct TZ
+    updateTzFieldHTML(utcMode)
     if (doUpdate) dispatchUpdateEvent()
   }
 
@@ -225,7 +225,7 @@ export function init (
   function nextInputValue () {
     if (!selectedDay.setByUser) return ''
     if (utcMode) {
-      return selectedDay.value.format(format)
+      return selectedDay.value.utc().format(format)
     } else {
       return selectedDay.value.local().format(format)
     }

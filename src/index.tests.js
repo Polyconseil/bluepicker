@@ -241,6 +241,22 @@ describe('Bluepicker with tz field', () => {
     root.addEventListener('bluepicker:update', listener)
     bluepicker.init('root', {mode: 'hour'}, initDate)
   })
+  it('should change the input field based on the TZ input', () => {
+    const initDate = '2012-01-12T01:03:01Z'
+    document.body.innerHTML = '<div id="root"><input type="text"></input><span class="timezone"></span></div>'
+    bluepicker.init('root', {mode: 'hour'}, initDate)
+
+    const inputElt = document.querySelector('#root > input')
+    const tzField = document.querySelector('#root .timezone')
+    expect(inputElt.value).toBe('2012-01-12T02:03:01+01:00')
+    expect(tzField.innerHTML).toBe('UTC+01:00')
+    tzField.click()
+    expect(inputElt.value).toBe('2012-01-12T01:03:01Z')
+    expect(tzField.innerHTML).toBe('UTC')
+    tzField.click()
+    expect(inputElt.value).toBe('2012-01-12T02:03:01+01:00')
+    expect(tzField.innerHTML).toBe('UTC+01:00')
+  })
   it('should adapt tz field to the selected date', () => {
     const withTzField = true
     setUpBluePicker({mode: 'hour'}, withTzField)
