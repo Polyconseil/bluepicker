@@ -10,7 +10,7 @@ A beautiful VanillaJS date or datetime picker that also supports local or UTC in
 
 It is nearly impossible to find a date(time) picker that simultaneously brings:
 
-- Only has the awesome [momentjs](https://momenjs.com) as dependency
+- Only has the awesome [momentjs](https://momentjs.com) as dependency
 - Local CSS styles (avoids conflicts with the surrounding application)
 - Can be either an efficient *Date* picker or a *Datetime* one
 - Supports UTC or local time input
